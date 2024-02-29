@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+  #setting master node service 
+  sparkmaster:
+    image: my_masternode/first:v0
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - SPARK_LOCAL_IP=sparkmaster
+      - SPARK_WORKLOAD=master
+  workernode-a:
+    image: myworkernode/first:v0
+    ports:  
+      - "8081:8080"
+    depends_on:
+      - sparkmaster
+    environment:
+      - SPARK_MASTER=spark://sparkmaster:7077
+        #- SPARK_WORKLOAD=worker
+        #- SPARK_LOCAL_IP=workernode
+  workernode-b:
+    image: myspark/first:v0
+    ports:
+      - "8082:8080"
+    depends_on:
+      - sparkmaster
+    environment:
+      - SPARK_MASTER=spark://sparkmaster:7077
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=workernode-b
+  workernode-c:
+    image: myspark/first:v0
+    ports:
+      - "8083:8080"
+    depends_on:
+      - sparkmaster
+    environment:
+      - SPARK_MASTER=spark://sparkmaster:7077
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=workernode-c
+
+  
